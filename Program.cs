@@ -66,7 +66,10 @@ namespace GenericsExample
                 new Book { Id = 20, Author = "James Joyce", Title = "Ulysses" },
                 new Book { Id = 21, Author = "Franz Kafka", Title = "Stories" },
             };
-        
+
+            var bookPager = new Pager<Book>(allBooks);
+            var dvdPager = new Pager<DVD>(allMovies);
+
             Console.WriteLine("Which listings would you like to see?");
             Console.WriteLine("1. Movies");
             Console.WriteLine("2. Books");
@@ -75,12 +78,35 @@ namespace GenericsExample
 
             if (selection == "1")
             {
-                allMovies.ForEach(m => Console.WriteLine($"{m.Title} ({m.Genre})"));
+                allMovies.ForEach(m => Console.WriteLine($"{m.Id}: {m.Title} ({m.Genre})"));
             }
 
             if (selection == "2")
             {
-                allBooks.ForEach(b => Console.WriteLine($"{b.Title} by {b.Author}"));
+                var firstPage = bookPager.GetCurrentPage();
+                firstPage.ForEach(m => Console.WriteLine($"{m.Id}: {m.Title} by {m.Author}"));
+
+                while (true)
+                {
+                    Console.WriteLine("Type Next or Prev to go forward or back");
+                    var forwardOrBack = Console.ReadLine();
+                    Console.Clear();
+
+                    if (forwardOrBack == "Next")
+                    {
+                        var nextPage = bookPager.GetNextPage();
+                        nextPage.ForEach(m => Console.WriteLine($"{m.Id}: {m.Title} by {m.Author}"));
+                    }
+                    else if (forwardOrBack == "Prev")
+                    {
+                        var previousPage = bookPager.GetPreviousPage();
+                        previousPage.ForEach(m => Console.WriteLine($"{m.Id}: {m.Title} by {m.Author}"));
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
             }
         }
     }
